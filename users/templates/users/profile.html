@@ -1,0 +1,9 @@
+{% extends "blog/base.html" %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+    <div class="content-section">
+        <h2>Your Profile: {{ user.username }}</h2>
+        <p>Welcome to your profile page!</p>
+    </div>
+{% endblock content %}
