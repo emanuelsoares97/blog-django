@@ -125,9 +125,14 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+import os
+
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')  # Directory to store uploaded media files
+MEDIA_URL = '/media/'  # URL to access media files
+
+
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
 LOGIN_REDIRECT_URL = 'blog-home' # URL to redirect to after login
 LOGOUT_REDIRECT_URL = 'login' # URL to redirect to after logout
-
 LOGIN_URL = 'login' # URL to redirect to when the user is not authenticated
