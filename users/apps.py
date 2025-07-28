@@ -6,4 +6,4 @@ class UsersConfig(AppConfig):
     name = 'users'
 
     def ready(self):
-        import users.signal
+        import users.signal # Ensure signals are imported when the app is ready
