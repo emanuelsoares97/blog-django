@@ -1,5 +1,12 @@
 {% extends "blog/base.html" %}
 {% block content %}
+<h1 class="mb-3">Posts by {{ view.kwargs.username }} ({{ posts.count }})</h1> <!-- Display the number of posts by the user -->
+    
+    {% if posts %}
+        <p>Here are the posts authored by {{ view.kwargs.username }}:</p>
+    {% else %}
+        <p>No posts found for this user.</p>
+    {% endif %}
     {% for post in posts %}
         <article class="media content-section">
             <img class="rounded-circle article-img" src="{{ post.author.profile.image.url }}" alt="Author Image">

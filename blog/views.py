@@ -1,7 +1,8 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from .models import Post
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.contrib.auth.models import User
 
 def home(request):
     context = {
@@ -14,6 +15,19 @@ class PostListView(ListView):
     template_name = 'blog/home.html'  # <app>/<model>_<viewtype>.html
     context_object_name = 'posts' # Name of the variable to access in the template
     ordering = ['-created_at']  # Order by created_at descending
+    paginate_by = 5  # Number of posts to display per page
+
+class UserPostListView(LoginRequiredMixin, ListView):
+    model = Post
+    template_name = 'blog/user_posts.html'  # <app>/<model>_<viewtype>.html
+    context_object_name = 'posts' # Name of the variable to access in the template
+    ordering = ['-created_at']  # Order by created_at descending
+    paginate_by = 5  # Number of posts to display per page
+
+    def get_queryset(self):
+        """Return only the posts authored by the current user."""
+        user = get_object_or_404(User, username=self.kwargs.get('username'))
+        return Post.objects.filter(author=user).order_by('-created_at')
 
 class PostDetailView(DetailView):
     model = Post
