@@ -136,3 +136,15 @@ CRISPY_TEMPLATE_PACK = 'bootstrap4'
 LOGIN_REDIRECT_URL = 'blog-home' # URL to redirect to after login
 LOGOUT_REDIRECT_URL = 'login' # URL to redirect to after logout
 LOGIN_URL = 'login' # URL to redirect to when the user is not authenticated
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'  # Use SMTP backend for email
+EMAIL_HOST = 'smtp.gmail.com'  # Your email provider's SMTP server
+EMAIL_PORT = 587  # SMTP port (usually 587 for TLS)
+EMAIL_USE_TLS = True  # Use TLS for security
+
+import dotenv
+
+dotenv.load_dotenv()
+
+EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
