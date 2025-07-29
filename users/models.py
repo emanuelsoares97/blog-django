@@ -12,8 +12,9 @@ class Profile(models.Model):
     def __str__(self):
         return f"{self.user.username}'s Profile"  # String representation of the Profile model
 
-    def save(self):
-        super().save()
+    def save(self, *args, **kwargs):
+        """Override the save method to resize the profile image."""
+        super().save(*args, **kwargs)  # Call the original save method
 
         img = Image.open(self.image.path) # Open the image file
 
