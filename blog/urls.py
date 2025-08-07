@@ -8,6 +8,7 @@ from .views import (
     PostDeleteView,
     UserPostListView,
     add_comment,
+    toggle_like_post_ajax
 )
 
 urlpatterns = [
@@ -19,4 +20,5 @@ urlpatterns = [
     path('post/<int:pk>/delete/', PostDeleteView.as_view(), name='post-delete'),
     path('user/<str:username>/', UserPostListView.as_view(), name='user-posts'),
     path('post/<int:post_id>/comment/', views.add_comment, name='add_comment'),  # <- nome do path corrigido aqui
+    path('post/<int:post_id>/toggle-like-ajax/', views.toggle_like_post_ajax, name='toggle-like-ajax'),  # Path for liking a post
 ]

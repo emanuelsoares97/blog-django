@@ -9,6 +9,7 @@ class Post(models.Model):
     created_at = models.DateTimeField(default=timezone.now) # Creation date of the post
     author = models.ForeignKey(User, on_delete=models.CASCADE) # If the user is deleted, their posts will also be removed
     updated_at = models.DateTimeField(auto_now=True) # Automatically update the timestamp when the post is modified
+    likes = models.ManyToManyField(User, related_name='liked_posts', blank=True) # Users who liked the post
 
 
     def __str__(self):
@@ -18,6 +19,10 @@ class Post(models.Model):
         """Redirect to the detail view of the post after creation or update."""
         # 'post-detail' is the name of the URL pattern for the post detail view        
         return reverse('post-detail', kwargs={'pk': self.pk})
+    
+    def total_likes(self):
+        """Return the total number of likes for the post."""
+        return self.likes.count()
     
 
     

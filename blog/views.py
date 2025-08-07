@@ -1,4 +1,6 @@
 from django.shortcuts import render, get_object_or_404, redirect
+from django.http import JsonResponse
+from django.views.decorators.http import require_POST
 from .models import Post, Comment
 from .forms import CommentForm
 from django.urls import reverse
@@ -127,3 +129,21 @@ def add_comment(request, post_id):
         form = CommentForm() # Create an empty form
 
     return redirect(post.get_absolute_url()) # Redirect to the post detail view after adding the comment
+
+@login_required
+@require_POST
+def toggle_like_post_ajax(request, post_id):
+    post = get_object_or_404(Post, pk=post_id)
+    user = request.user
+    if user in post.likes.all():
+        post.likes.remove(user)
+        liked = False
+    else:
+        post.likes.add(user)
+        liked = True
+
+    data = {
+        'liked': liked,
+        'total_likes': post.likes.count(),
+    }
+    return JsonResponse(data)

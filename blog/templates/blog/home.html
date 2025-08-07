@@ -12,6 +12,23 @@
                 <p class="article-content">{{ post.content }}</p>
 
                 <p><small>{{post.comments.count}} comentário{{post.comments.count|pluralize}}</small></p>
+                <p>
+                    {% if user.is_authenticated %}
+                        <button 
+                            class="btn btn-sm btn-outline-primary like-button" 
+                            data-post-id="{{ post.pk }}"
+                            aria-pressed="{% if user in post.likes.all %}true{% else %}false{% endif %}">
+                            {% if user in post.likes.all %}
+                                ❤️
+                            {% else %}
+                                🤍
+                            {% endif %}
+                            (<span class="likes-count">{{ post.likes.count }}</span>)
+                        </button>
+                    {% else %}
+                        <small><a href="{% url 'login' %}">Faça login</a> para curtir</small>
+                    {% endif %}
+                </p>
             </div>
         </article>
     {% endfor %}

@@ -40,9 +40,9 @@
             {% for comment in parent_comments %}
                 <div class="comment mb-3 p-3 border rounded" id="comment-{{ comment.id }}">
                     <div class="d-flex align-items-center mb-2">
-    <img src="{{ comment.author.profile.image.url }}" alt="Author Image" class="rounded-circle me-2" style="width: 40px; height: 40px; object-fit: cover;">
-    <a href="{% url 'user-posts' comment.author.username %}" class="text-decoration-none fw-bold">{{ comment.author.username }}</a>
-</div>
+                    <img src="{{ comment.author.profile.image.url }}" alt="Author Image" class="rounded-circle me-2" style="width: 40px; height: 40px; object-fit: cover;">
+                    <a href="{% url 'user-posts' comment.author.username %}" class="text-decoration-none fw-bold">{{ comment.author.username }}</a>
+                </div>
 
                     <p>{{ comment.content }}</p>
                     <small>{{ comment.created_at|date:"d/m/Y H:i" }}</small>
