@@ -1,0 +1,11 @@
+{% for reply in replies %}
+  <div class="reply ml-4 mb-2 p-2 border rounded">
+    <p><strong>{{ reply.author.username }}</strong> respondeu:</p>
+    <p>{{ reply.content }}</p>
+    <small>{{ reply.created_at|date:"d/m/Y H:i" }}</small>
+
+    {% include 'blog/comment_replies.html' with replies=reply.replies.all %}
+  </div>
+{% empty %}
+  <!-- Nenhuma resposta -->
+{% endfor %}

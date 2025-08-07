@@ -1,20 +1,76 @@
 {% extends "blog/base.html" %}
 {% block content %}
-    <article class="media content-section">
-        <img class="rounded-circle article-img" src="{{ object.author.profile.image.url }}" alt="Author Image">
-        <div class="media-body">
-            <div class="article-metadata">
-                <a class="mr-2" href="{% url 'user-posts' object.author.username %}">{{ object.author }}</a>
-                <small class="text-muted">{{ object.created_at }}</small>
-                {% if user.is_authenticated and user == object.author %}
-                    <div>
-                        <a href="{% url 'post-update' object.id %}" class="btn btn-outline-secondary btn-sm mt-1 mb-1">Update</a>
-                        <a href="{% url 'post-delete' object.id %}" class="btn btn-outline-danger btn-sm mt-1 mb-1">Delete</a>
-                    </div>
-                {% endif %}
+<article class="media content-section">
+    <img class="rounded-circle article-img" src="{{ object.author.profile.image.url }}" alt="Author Image">
+    <div class="media-body">
+        <div class="article-metadata">
+            <a class="mr-2" href="{% url 'user-posts' object.author.username %}">{{ object.author }}</a>
+            <small class="text-muted">{{ object.created_at }}</small>
+            {% if user.is_authenticated and user == object.author %}
+            <div>
+                <a href="{% url 'post-update' object.id %}" class="btn btn-outline-secondary btn-sm mt-1 mb-1">Update</a>
+                <a href="{% url 'post-delete' object.id %}" class="btn btn-outline-danger btn-sm mt-1 mb-1">Delete</a>
             </div>
-            <h2 class="article-title">{{ object.title }}</h2>
-            <p class="article-content">{{ object.content }}</p>
+            {% endif %}
         </div>
-    </article>
+        <h2 class="article-title">{{ object.title }}</h2>
+        <p class="article-content">{{ object.content }}</p>
+    </div>
+</article>
+
+<!-- Seção de Comentários -->
+<section id="comments-section">
+    <div class="mt-5">
+
+        {% if user.is_authenticated %}
+            <h4 class="mt-4">Adiciona um comentário</h4>
+            <form method="post" action="{% url 'add_comment' object.id %}">
+                {% csrf_token %}
+                <div class="mb-3">
+                    {{ form.content}}
+                </div>
+                <button type="submit" class="btn btn-primary">Enviar</button>
+            </form>
+        {% else %}
+            <p class="mt-3">É necessário <a href="{% url 'login' %}">fazer login</a> para comentar.</p>
+        {% endif %}
+
+        <h3>Comentários</h3>
+        <div id="comments">
+            {% for comment in parent_comments %}
+                <div class="comment mb-3 p-3 border rounded" id="comment-{{ comment.id }}">
+                    <div class="d-flex align-items-center mb-2">
+    <img src="{{ comment.author.profile.image.url }}" alt="Author Image" class="rounded-circle me-2" style="width: 40px; height: 40px; object-fit: cover;">
+    <a href="{% url 'user-posts' comment.author.username %}" class="text-decoration-none fw-bold">{{ comment.author.username }}</a>
+</div>
+
+                    <p>{{ comment.content }}</p>
+                    <small>{{ comment.created_at|date:"d/m/Y H:i" }}</small>
+
+                <a href="#" class="reply-link" data-comment-id="{{ comment.id }}">Responder</a>
+
+                <!-- Formulário de resposta oculto dentro do comentário -->
+                <form method="post" action="{% url 'add_comment' post.id %}" class="reply-form d-none mt-2" data-parent-id="{{ comment.id }}">
+                    {% csrf_token %}
+                    {{ form.content }}
+                    <input type="hidden" name="parent_comment" value="{{ comment.id }}">
+                    <button type="submit" class="btn btn-sm btn-primary mt-1">Enviar Resposta</button>
+                </form>
+
+                <!-- Renderiza as respostas aninhadas recursivamente -->
+                {% include 'blog/comment_replies.html' with replies=comment.replies.all %}
+                </div>
+            {% empty %}
+                <p>Seja o primeiro a comentar!</p>
+            {% endfor %}
+
+
+
+        </div>
+
+        
+    </div>
+
+
+</section>
 {% endblock content %}

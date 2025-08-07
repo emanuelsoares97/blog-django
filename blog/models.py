@@ -19,19 +19,21 @@ class Post(models.Model):
         # 'post-detail' is the name of the URL pattern for the post detail view        
         return reverse('post-detail', kwargs={'pk': self.pk})
     
+
+    
 class Comment(models.Model):
     post = models.ForeignKey(Post, related_name='comments', on_delete=models.CASCADE) # Link comment to a post
     author = models.ForeignKey(User, on_delete=models.CASCADE) # Author of the comment
     content = models.TextField() # Content of the comment
     created_at = models.DateTimeField(default=timezone.now) # Creation date of the comment
-    approved = models.BooleanField(default=False) # Whether the comment is approved for display
-    parent_comment = models.ForeignKey('self', null=True, blank=True, related_name='replies', on_delete=models.CASCADE) # For threaded comments
+    parent_comment = models.ForeignKey('self',
+                                        null=True, 
+                                        blank=True, 
+                                        related_name='replies', 
+                                        on_delete=models.CASCADE) # For threaded comments
 
     def __str__(self):
         return f'Comment by {self.author} on {self.post.title}'
     
-    def approved_comments(self):
-        """Return approved comments."""
-        return self.comments.filter(approved=True)
     
     
