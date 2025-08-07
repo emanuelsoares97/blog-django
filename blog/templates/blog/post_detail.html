@@ -12,13 +12,31 @@
                 <a href="{% url 'post-delete' object.id %}" class="btn btn-outline-danger btn-sm mt-1 mb-1">Delete</a>
             </div>
             {% endif %}
+            
         </div>
         <h2 class="article-title">{{ object.title }}</h2>
         <p class="article-content">{{ object.content }}</p>
+        <p>
+                    {% if user.is_authenticated %}
+                        <button 
+                            class="btn btn-sm btn-outline-primary like-button" 
+                            data-post-id="{{ post.pk }}"
+                            aria-pressed="{% if user in post.likes.all %}true{% else %}false{% endif %}">
+                            {% if user in post.likes.all %}
+                                ❤️
+                            {% else %}
+                                🤍
+                            {% endif %}
+                            (<span class="likes-count">{{ post.likes.count }}</span>)
+                        </button>
+                    {% else %}
+                        <small><a href="{% url 'login' %}">Faça login</a> para curtir</small>
+                    {% endif %}
+                </p>
     </div>
 </article>
 
-<!-- Seção de Comentários -->
+
 <section id="comments-section">
     <div class="mt-5">
 
