@@ -4,7 +4,6 @@ from django.contrib.auth.models import User
 from django.urls import reverse # Redirect to the detail view of the post after creation or update
 
 class Post(models.Model):
-    title = models.CharField(max_length=100) # Title of the post
     content = models.TextField() # Content of the post
     created_at = models.DateTimeField(default=timezone.now) # Creation date of the post
     author = models.ForeignKey(User, on_delete=models.CASCADE) # If the user is deleted, their posts will also be removed
@@ -13,7 +12,8 @@ class Post(models.Model):
 
 
     def __str__(self):
-        return self.title
+        
+        return self.content
     
     def get_absolute_url(self):
         """Redirect to the detail view of the post after creation or update."""
@@ -38,7 +38,7 @@ class Comment(models.Model):
                                         on_delete=models.CASCADE) # For threaded comments
 
     def __str__(self):
-        return f'Comment by {self.author} on {self.post.title}'
+        return f'Comment by {self.author} on {self.post.content}'
     
     
     

@@ -55,7 +55,7 @@ class PostCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
     Only logged-in users can create posts."""
     model = Post
     template_name = 'blog/post_form.html'
-    fields = ['title', 'content']
+    fields = ['content']
 
     def form_valid(self, form):
         form.instance.author = self.request.user # Automatically set the author to the current user
@@ -71,7 +71,7 @@ class PostUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     Only logged-in users can update their posts."""
     model = Post
     template_name = 'blog/post_form.html'
-    fields = ['title', 'content']
+    fields = ['content']
 
     def form_valid(self, form):
         form.instance.author = self.request.user # Automatically set the author to the current user

@@ -14,8 +14,8 @@
             {% endif %}
             
         </div>
-        <h2 class="article-title">{{ object.title }}</h2>
-        <p class="article-content">{{ object.content }}</p>
+        <p class="article-title">{{ object.content }}</p>
+
         <p>
                     {% if user.is_authenticated %}
                         <button 
@@ -30,7 +30,7 @@
                             (<span class="likes-count">{{ post.likes.count }}</span>)
                         </button>
                     {% else %}
-                        <small><a href="{% url 'login' %}">Faça login</a> para curtir</small>
+                        <small><a href="{% url 'login' %}">Faça login</a> para dar like</small>
                     {% endif %}
                 </p>
     </div>
@@ -63,9 +63,9 @@
                 </div>
 
                     <p>{{ comment.content }}</p>
-                    <small>{{ comment.created_at|date:"d/m/Y H:i" }}</small>
+                    <small>{{ comment.created_at }}</small>
 
-                <a href="#" class="reply-link" data-comment-id="{{ comment.id }}">Responder</a>
+                <p><a href="#" class="reply-link" data-comment-id="{{ comment.id }}"><button class="btn btn-sm btn-outline-primary like-button">Responder</button></a></p>
 
                 <!-- Formulário de resposta oculto dentro do comentário -->
                 <form method="post" action="{% url 'add_comment' post.id %}" class="reply-form d-none mt-2" data-parent-id="{{ comment.id }}">

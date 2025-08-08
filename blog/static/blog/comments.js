@@ -14,7 +14,7 @@ document.addEventListener('DOMContentLoaded', function() {
       if (form) {
         form.classList.remove('d-none');
         form.querySelector('textarea').focus();
-        // Opcional: scrolla para o formulário
+      
         form.scrollIntoView({ behavior: 'smooth', block: 'center' });
       }
     });
