@@ -1,23 +1,24 @@
 {% extends "blog/base.html" %}
+{% load crispy_forms_tags %}
 {% block content %}
+
     {% for post in posts %}
-        <article class="media content-section">
+        <article class="media content-section" onclick="location.href='{% url 'post-detail' post.pk %}'" style="cursor:pointer;">
             <img class="rounded-circle article-img" src="{{ post.author.profile.image.url }}" alt="Author Image">
             <div class="media-body">
                 <div class="article-metadata">
-                <a class="mr-2" href="{% url 'user-posts' post.author.username %}">{{ post.author }}</a>
-                <small class="text-muted">{{ post.created_at }}</small>
+                    <a class="mr-2" href="{% url 'user-posts' post.author.username %}">{{ post.author }}</a>
+                    <small class="text-muted">{{ post.created_at }}</small>
                 </div>
-                <p><a class="article-title" href="{% url 'post-detail' post.pk %}">{{ post.content }}</a></p>
-                
+                <p>{{ post.content }}</p>
 
-                
                 <p> 
                     {% if user.is_authenticated %}
                         <button 
                             class="btn btn-sm btn-outline-primary like-button" 
                             data-post-id="{{ post.pk }}"
-                            aria-pressed="{% if user in post.likes.all %}true{% else %}false{% endif %}">
+                            aria-pressed="{% if user in post.likes.all %}true{% else %}false{% endif %}"
+                            onclick="event.stopPropagation();">
                             {% if user in post.likes.all %}
                                 ❤️
                             {% else %}
@@ -26,12 +27,17 @@
                             (<span class="likes-count">{{ post.likes.count }}</span>)
                         </button>
                     {% else %}
-                        <small><a href="{% url 'login' %}">Faça login</a> para dar like</small>
+                        <small><a href="{% url 'login' %}" onclick="event.stopPropagation();">Faça login</a> para dar like</small>
                     {% endif %}
-                    <a href="{% url 'post-detail' post.pk %}"><button  class="btn btn-sm btn-outline-primary like-button" >{{post.comments.count}}  💬</button></a>
+                    <a href="{% url 'post-detail' post.pk %}">
+                        <button class="btn btn-sm btn-outline-primary like-button">
+                            {{ post.comments.count }} 💬
+                        </button>
+                    </a>
                 </p>
             </div>
         </article>
+
     {% endfor %}
     
     <div class="pagination">

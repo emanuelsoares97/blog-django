@@ -19,6 +19,6 @@ urlpatterns = [
     path('post/<int:pk>/update/', PostUpdateView.as_view(), name='post-update'),
     path('post/<int:pk>/delete/', PostDeleteView.as_view(), name='post-delete'),
     path('user/<str:username>/', UserPostListView.as_view(), name='user-posts'),
-    path('post/<int:post_id>/comment/', views.add_comment, name='add_comment'),  # <- nome do path corrigido aqui
-    path('post/<int:post_id>/toggle-like-ajax/', views.toggle_like_post_ajax, name='toggle-like-ajax'),  # Path for liking a post
+    path('post/<int:post_id>/comment/', views.add_comment, name='add_comment'), 
+    path('post/<int:post_id>/toggle-like-ajax/', views.toggle_like_post_ajax, name='toggle-like-ajax'),
 ]
