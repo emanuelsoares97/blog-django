@@ -18,32 +18,42 @@ from django.contrib import admin
 from django.contrib.auth import views as auth_views
 from django.urls import path, include
 from users import views as user_views
+from django.views.generic import RedirectView
 from django.conf import settings
 from django.conf.urls.static import static
-
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('blog.urls')),
+
+    # User authentication flows - all centralized in your custom 'users' app views
     path('register/', user_views.register, name='register'),
-    path('login/', auth_views.LoginView.as_view(template_name='users/login.html'), name='login'),
+    path('login/', user_views.CustomLoginView.as_view(), name='login'),
     path('logout/', auth_views.LogoutView.as_view(template_name='users/logout.html'), name='logout'),
 
     path('password-reset/', auth_views.PasswordResetView.as_view(
         template_name='users/password_reset.html'), name='password_reset'),
-
     path('password-reset/done/', auth_views.PasswordResetDoneView.as_view(
-        template_name='users/password_reset_done.html'), name='password_reset_done'), 
-
+        template_name='users/password_reset_done.html'), name='password_reset_done'),
     path('password-reset-confirm/<uidb64>/<token>/', auth_views.PasswordResetConfirmView.as_view(
-        template_name='users/password_reset_confirm.html'), name='password_reset_confirm'), 
-
+        template_name='users/password_reset_confirm.html'), name='password_reset_confirm'),
     path('password-reset-complete/', auth_views.PasswordResetCompleteView.as_view(
         template_name='users/password_reset_complete.html'), name='password_reset_complete'),
 
     path('profile/', user_views.profile, name='profile'),
+
+    # REDIRECTS: Make all default allauth authentication routes point to your custom user views
+    path('accounts/login/', RedirectView.as_view(url='/login/', permanent=False)),
+    path('accounts/signup/', RedirectView.as_view(url='/register/', permanent=False)),
+    # You can also add more redirects if needed, e.g. for password reset:
+    # path('accounts/password/reset/', RedirectView.as_view(url='/password-reset/', permanent=False)),
+
+    # Include all allauth social authentication URLs
+    path('accounts/', include('allauth.urls')),
 ]
 
-if settings.DEBUG: # Serve static files during development
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) # Serve media files during development
+# Serve static files while in debug mode (for development)
+if settings.DEBUG:
+    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+
     

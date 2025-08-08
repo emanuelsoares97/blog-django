@@ -23,3 +23,8 @@ class Profile(models.Model):
             output_size = (300, 300)
             img.thumbnail(output_size)
             img.save(self.image.path)
+
+from django.contrib.auth.views import LoginView
+from allauth.socialaccount.providers import registry
+
+

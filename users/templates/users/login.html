@@ -1,33 +1,60 @@
 {% extends "blog/base.html" %}
 {% load crispy_forms_tags %}
+{% load socialaccount %}
 
-{% block title %}Register{% endblock %}
+{% block title %}Login{% endblock %}
 
 {% block content %}
+<div class="container mt-4" style="max-width: 500px;">
+
+    <!-- Login Social -->
+    {% get_providers as socialaccount_providers %}
+    {% if socialaccount_providers %}
+        <h3 class="mb-3">Login com Conta Social</h3>
+        <div class="d-flex flex-column gap-2 mb-4">
+
+            {% providers_media_js %}
+
+            {% for provider in socialaccount_providers %}
+                <a href="{% provider_login_url provider.id %}"
+                   class="btn btn-outline-primary d-flex align-items-center justify-content-center" role="button">
+                    <span class="me-2">
+                        {% if provider.id == 'google' %}
+                            <i class="bi bi-google"></i>
+                        {% elif provider.id == 'github' %}
+                            <i class="bi bi-github"></i>
+                        {% else %}
+                            <i class="bi bi-person-circle"></i>
+                        {% endif %}
+                    </span>
+                    Entrar com {{ provider.name }}
+                </a>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <!-- Login Normal -->
     <div class="content-section">
+        <form method="POST">
+            {% csrf_token %}
+            <fieldset class="form-group">
+                <legend class="border-bottom mb-4">Login</legend>
+                {{ form|crispy }}
+            </fieldset>
 
-            <form method="POST">
-                {% csrf_token %}
-                <fieldset class="form-group">
-                    <legend class="border-bottom mb-4">Login</legend>
-                    {{ form|crispy }}
-                </fieldset>
+            <div class="form-group">
+                <button type="submit" class="btn btn-outline-info w-100">Login</button>
+            </div>
+        </form>
 
-                <div class="form-group">
-                    <button type="submit" class="btn btn-outline-info">Login</button>
-                </div>
-            </form>
-
-        <div class="border-top pt-3">
+        <div class="border-top pt-3 text-center">
             <small>
-                <p>Não tens conta? <a href="{% url 'register' %}">Cria aqui!</a></p>
-            </small>
-            <small>
-                <p>Esqueceste a password? <a href="{% url 'password_reset' %}">Reset aqui!</a></p>
-            </small>
-            <small>
-                <p>Precisas de ajuda? <a href="#">Contacta-nos aqui!</a></p>
+                Não tens conta? <a href="{% url 'register' %}">Cria aqui!</a><br>
+                Esqueceste a password? <a href="{% url 'password_reset' %}">Reset aqui!</a><br>
+                Precisas de ajuda? <a href="#">Contacta-nos aqui!</a>
             </small>
         </div>
     </div>
+
+</div>
 {% endblock content %}
