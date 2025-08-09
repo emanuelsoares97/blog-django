@@ -14,32 +14,32 @@ def create_profile(sender, instance, created, **kwargs):
 
 @receiver(post_save, sender=User)
 def save_profile(sender, instance, **kwargs):
-    """Signal to save the Profile instance when the User is saved."""
+    """Signal to save the Profile instance when the User is saved.
+    This ensures that the Profile is always up-to-date with the User's information."""
     
     instance.profile.save()  # Save the Profile associated with the User
 
-import requests
-from django.core.files.base import ContentFile
-from allauth.socialaccount.signals import social_account_added, social_account_updated
+
+
+from allauth.account.signals import user_logged_in
 from django.dispatch import receiver
-from django.contrib.auth import get_user_model
-from users.models import Profile
 
-@receiver([social_account_added, social_account_updated])
-def save_google_profile_picture(sender, request, sociallogin, **kwargs):
-    print("Signal executado para usuário:", sociallogin.user)
-    if sociallogin.account.provider == 'google':
-        user = sociallogin.user
-        profile, _ = Profile.objects.get_or_create(user=user)
-        picture_url = sociallogin.account.extra_data.get('picture')
-        print("URL da foto:", picture_url)
-        if picture_url:
-            try:
-                response = requests.get(picture_url)
-                response.raise_for_status()
-                file_name = f"{user.username}_google.jpg"
-                profile.image.save(file_name, ContentFile(response.content), save=True)
-                print("Foto salva com sucesso!")
-            except Exception as e:
-                print("Erro ao copiar foto do Google:", e)
+@receiver(user_logged_in)
+def save_profile_picture_on_login(request, user, **kwargs):
+    """Signal to save the user's profile picture from Google on login."""
+    try:
+        social_account = user.socialaccount_set.filter(provider='google').first()
+        if social_account:
+            picture_url = social_account.extra_data.get('picture')
+            if picture_url:
+                profile = user.profile
+                if not profile.image or 'google' not in profile.image.name:
+                    import requests
+                    from django.core.files.base import ContentFile
 
+                    response = requests.get(picture_url)
+                    response.raise_for_status()
+                    file_name = f"{user.username}_google.jpg"
+                    profile.image.save(file_name, ContentFile(response.content), save=True)
+    except Exception as e:
+        print("Erro ao salvar foto do Google no login:", e)

@@ -193,12 +193,12 @@ SOCIALACCOUNT_PROVIDERS = {
         },
         'SCOPE': [
             'profile',
-            'email',
+            'email'
         ],
         'AUTH_PARAMS': {
             'access_type': 'online',
-            'prompt': 'select_account',
+            'prompt': 'select_account'
         },
-        'METHOD': 'oauth2',
+        'METHOD': 'oauth2'
     }
 }

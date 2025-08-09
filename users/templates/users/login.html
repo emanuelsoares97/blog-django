@@ -8,9 +8,9 @@
 <div class="container mt-4" style="max-width: 500px;">
 
     <!-- Login Social -->
-    {% get_providers as socialaccount_providers %}
-    {% if socialaccount_providers %}
-        <h3 class="mb-3">Login com Conta Social</h3>
+        {% get_providers as socialaccount_providers %}
+        {% if socialaccount_providers %}
+
         <div class="d-flex flex-column gap-2 mb-4">
 
             {% providers_media_js %}
