@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 from .models import Post
 
 def sidebar_data(request):
+    print("Sidebar data context processor called")
     # Post com mais likes
     post_max_likes = Post.objects.annotate(num_likes=Count('likes')).order_by('-num_likes').first()
 
