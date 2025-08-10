@@ -16,8 +16,8 @@
             {% providers_media_js %}
 
             {% for provider in socialaccount_providers %}
-                <a href="{% provider_login_url provider.id %}"
-                   class="btn btn-outline-primary d-flex align-items-center justify-content-center" role="button">
+                <a href="{% provider_login_url provider.id %}?process=login"
+                class="btn btn-outline-primary d-flex align-items-center justify-content-center" role="button">
                     <span class="me-2">
                         {% if provider.id == 'google' %}
                             <i class="bi bi-google"></i>
@@ -30,6 +30,8 @@
                     Entrar com {{ provider.name }}
                 </a>
             {% endfor %}
+
+
         </div>
     {% endif %}
 

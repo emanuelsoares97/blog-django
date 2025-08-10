@@ -2,19 +2,21 @@ from django.shortcuts import redirect, render
 from .forms import UserRegistrationForm
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from .forms import UserUpdateForm, ProfileUpdateForm
+from .forms import UserUpdateForm, ProfileUpdateForm, CustomLoginForm
 
 from allauth.socialaccount.providers import registry
 from allauth.account.views import LoginView
 
 class CustomLoginView(LoginView):
     template_name = 'users/login.html'  # ou 'account/login.html', conforme seu template
+    authentication_form = CustomLoginForm  # Use your custom login form
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         #  get_class_list() providers socials
         context['socialaccount_providers'] = registry.get_class_list()
         return context
+        
 
 
 def register(request):

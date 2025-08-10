@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth.models import User
-from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from .models import Profile
 
 class UserRegistrationForm(UserCreationForm):
@@ -24,3 +24,11 @@ class ProfileUpdateForm(forms.ModelForm):
         # Specify the model and fields to include in the form
         model = Profile
         fields = ['image']  # what fields to include in the form for Profile
+
+class CustomLoginForm(AuthenticationForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+       
+        for field in self.fields.values():
+            field.help_text = None
+            field.widget.attrs.pop('aria-describedby', None)  

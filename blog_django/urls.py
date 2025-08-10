@@ -42,14 +42,21 @@ urlpatterns = [
 
     path('profile/', user_views.profile, name='profile'),
 
-    # REDIRECTS: Make all default allauth authentication routes point to your custom user views
-    path('accounts/login/', RedirectView.as_view(url='/login/', permanent=False)),
-    path('accounts/signup/', RedirectView.as_view(url='/register/', permanent=False)),
-    # You can also add more redirects if needed, e.g. for password reset:
-    # path('accounts/password/reset/', RedirectView.as_view(url='/password-reset/', permanent=False)),
+    
 
     # Include all allauth social authentication URLs
-    path('accounts/', include('allauth.urls')),
+    
+
+    # Redirects for allauth routes
+    path('accounts/login/', RedirectView.as_view(url='/login/', permanent=False)),
+    path('accounts/signup/', RedirectView.as_view(url='/register/', permanent=False)),
+    
+    path('accounts/password/reset/', RedirectView.as_view(url='/password-reset/', permanent=False)),
+    path('accounts/password/reset/done/', RedirectView.as_view(url='/password-reset/done/', permanent=False)),
+    path('accounts/password/reset/confirm/<uidb64>/<token>/', RedirectView.as_view(url='/password-reset-confirm/<uidb64>/<token>/', permanent=False)),
+    path('accounts/password/reset/complete/', RedirectView.as_view(url='/password-reset-complete/', permanent=False)),
+    path('accounts/', include('allauth.urls'))
+
 ]
 
 # Serve static files while in debug mode (for development)
