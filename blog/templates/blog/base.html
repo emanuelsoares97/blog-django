@@ -101,7 +101,7 @@
             {% if user_max_posts %}
             <div class="mt-3">
                 <strong>Utilizador com mais posts:</strong><br>
-                <a href="{% url 'user-posts' user_max_posts.username %}">
+                <a href="{% url 'public_profile' user_max_posts.username %}">
                     {{ user_max_posts.username }}
                 </a>
                 ({{ user_max_posts.num_posts }} posts)

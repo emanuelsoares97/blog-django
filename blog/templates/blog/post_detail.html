@@ -4,7 +4,7 @@
     <img class="rounded-circle article-img" src="{{ object.author.profile.image.url }}" alt="Author Image">
     <div class="media-body">
         <div class="article-metadata">
-            <a class="mr-2" href="{% url 'user-posts' object.author.username %}">{{ object.author }}</a>
+            <a class="mr-2" href="{% url 'public_profile' object.author.username %}">{{ object.author }}</a>
             <small class="text-muted">{{ object.created_at }}</small>
             {% if user.is_authenticated and user == object.author %}
             <div>
@@ -59,7 +59,7 @@
                 <div class="comment mb-3 p-3 border rounded" id="comment-{{ comment.id }}">
                     <div class="d-flex align-items-center mb-2">
                     <img src="{{ comment.author.profile.image.url }}" alt="Author Image" class="rounded-circle me-2" style="width: 40px; height: 40px; object-fit: cover;">
-                    <a href="{% url 'user-posts' comment.author.username %}" class="text-decoration-none fw-bold">{{ comment.author.username }}</a>
+                    <a href="{% url 'public_profile' comment.author.username %}" class="text-decoration-none fw-bold">{{ comment.author.username }}</a>
                 </div>
 
                     <p>{{ comment.content }}</p>

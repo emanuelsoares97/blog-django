@@ -23,17 +23,7 @@ class PostListView(ListView):
     ordering = ['-created_at']  # Order by created_at descending
     paginate_by = 5  # Number of posts to display per page
 
-class UserPostListView(LoginRequiredMixin, ListView):
-    model = Post
-    template_name = 'blog/user_posts.html'  # <app>/<model>_<viewtype>.html
-    context_object_name = 'posts' # Name of the variable to access in the template
-    ordering = ['-created_at']  # Order by created_at descending
-    paginate_by = 5  # Number of posts to display per page
 
-    def get_queryset(self):
-        """Return only the posts authored by the current user."""
-        user = get_object_or_404(User, username=self.kwargs.get('username'))
-        return Post.objects.filter(author=user).order_by('-created_at')
 
 class PostDetailView(DetailView):
     model = Post

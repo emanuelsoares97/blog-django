@@ -6,6 +6,12 @@ from .forms import UserUpdateForm, ProfileUpdateForm, CustomLoginForm
 
 from allauth.socialaccount.providers import registry
 from allauth.account.views import LoginView
+from blog.models import Post
+
+from django.shortcuts import get_object_or_404, render
+from django.contrib.auth.models import User
+
+from django.core.paginator import Paginator
 
 class CustomLoginView(LoginView):
     template_name = 'users/login.html'  # ou 'account/login.html', conforme seu template
@@ -55,9 +61,32 @@ def profile(request):
         u_form = UserUpdateForm(instance=request.user)
         p_form = ProfileUpdateForm(instance=request.user.profile)
 
+    posts = Post.objects.filter(author=request.user).order_by('-created_at')
+
     context = {
         'u_form': u_form,
-        'p_form': p_form
+        'p_form': p_form,
+        'posts': posts
     }
     return render(request, 'users/profile.html', context)
 
+
+
+def public_profile(request, username):
+    profile_user = get_object_or_404(User, username=username)
+
+    if request.user.is_authenticated and request.user == profile_user:
+        return redirect('profile')
+
+    posts_qs = Post.objects.filter(author=profile_user).order_by('-created_at')
+
+    paginator = Paginator(posts_qs, 5)
+    page_number = request.GET.get('page')
+    posts = paginator.get_page(page_number)
+
+    return render(request, 'users/public_profile.html', {
+        'profile_user': profile_user,
+        'posts': posts,
+        'is_paginated': posts.has_other_pages(),
+        'page_obj': posts
+    })

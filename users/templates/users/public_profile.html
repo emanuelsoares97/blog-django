@@ -1,0 +1,95 @@
+{% extends 'blog/base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+
+
+    <div class="card shadow-sm mb-4 border-0">
+        <div class="card-body text-center">
+
+            <img src="{{ profile_user.profile.image.url }}" 
+                 alt="{{ profile_user.username }}" 
+                 class="rounded-circle shadow-sm mb-3" 
+                 style="width: 120px; height: 120px; object-fit: cover;">
+            
+
+            <h2 class="fw-bold">{{ profile_user.username }}</h2>
+            
+
+            <a href="{% url 'conversation' profile_user.username %}" 
+               class="btn btn-primary mt-2">
+                💬 Enviar mensagem
+            </a>
+        </div>
+    </div>
+
+
+<h4 class="mb-4 fw-semibold">Posts</h4>
+
+{% for post in posts %}
+    <article class="media content-section" onclick="location.href='{% url 'post-detail' post.pk %}'" style="cursor:pointer;">
+        <img class="rounded-circle article-img" src="{{ post.author.profile.image.url }}" alt="Author Image">
+        <div class="media-body">
+            <div class="article-metadata">
+                <a class="mr-2" href="{% url 'public_profile' post.author.username %}">{{ post.author }}</a>
+                <small class="text-muted">{{ post.created_at }}</small>
+            </div>
+            <p>{{ post.content }}</p>
+
+            <p> 
+                {% if user.is_authenticated %}
+                    <button 
+                        class="btn btn-sm btn-outline-primary like-button" 
+                        data-post-id="{{ post.pk }}"
+                        aria-pressed="{% if user in post.likes.all %}true{% else %}false{% endif %}"
+                        onclick="event.stopPropagation();">
+                        {% if user in post.likes.all %}
+                            ❤️
+                        {% else %}
+                            🤍
+                        {% endif %}
+                        (<span class="likes-count">{{ post.likes.count }}</span>)
+                    </button>
+                {% else %}
+                    <small><a href="{% url 'login' %}" onclick="event.stopPropagation();">Faça login</a> para dar like</small>
+                {% endif %}
+                <a href="{% url 'post-detail' post.pk %}">
+                    <button class="btn btn-sm btn-outline-primary like-button">
+                        {{ post.comments.count }} 💬
+                    </button>
+                </a>
+            </p>
+        </div>
+    </article>
+{% empty %}
+    <div class="alert alert-info">Este utilizador ainda não publicou nada.</div>
+{% endfor %}
+
+
+<div class="pagination mt-4">
+    {% if is_paginated %}
+        <span class="step-links">
+            {% if page_obj.has_previous %}
+                <a class="btn btn-outline-info mb-2" href="?page=1">&laquo; First</a>
+                <a class="btn btn-outline-info mb-2" href="?page={{ page_obj.previous_page_number }}">Previous</a>
+            {% endif %}
+
+            {% for num in page_obj.paginator.page_range %}
+                {% if page_obj.number == num %}
+                    <span class="btn btn-secondary mb-2">{{ num }}</span>
+                {% elif num > page_obj.number|add:-2 and num < page_obj.number|add:2 %}
+                    <a class="btn btn-outline-info mb-2" href="?page={{ num }}">{{ num }}</a>
+                {% endif %}
+            {% endfor %}
+
+            {% if page_obj.has_next %}
+                <a class="btn btn-outline-info mb-2" href="?page={{ page_obj.next_page_number }}">Next</a>
+                <a class="btn btn-outline-info mb-2" href="?page={{ page_obj.paginator.num_pages }}">Last &raquo;</a>
+            {% endif %}
+        </span>
+    {% endif %}
+</div>
+
+</div>
+{% endblock %}
+

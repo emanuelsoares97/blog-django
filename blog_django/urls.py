@@ -43,8 +43,7 @@ urlpatterns = [
         template_name='users/password_reset_complete.html'), name='password_reset_complete'),
 
     path('profile/', user_views.profile, name='profile'),
-
-    
+    path('profile/<str:username>/', user_views.public_profile, name='public_profile'),
 
     # Include all allauth social authentication URLs
     
