@@ -27,6 +27,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('blog.urls')),
     path('private_messages/', include('private_messages.urls')),
+    path('notifications/', include('notifications.urls')),
 
     # User authentication flows - all centralized in your custom 'users' app views
     path('register/', user_views.register, name='register'),

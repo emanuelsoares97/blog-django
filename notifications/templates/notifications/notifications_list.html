@@ -1,0 +1,22 @@
+{% extends 'blog/base.html' %}
+{% load humanize %}
+
+{% block content %}
+<h2>Notificações</h2>
+
+<ul class="list-group">
+    {% for notification in notifications %}
+    <li class="list-group-item {% if notification.unread %}list-group-item-primary{% endif %}">
+        {% if notification.notification_type == 1 %}
+            ❤️ <a href="{% url 'public_profile' notification.sender.username %}"><strong>{{ notification.sender }}</strong></a> gostou do seu post
+        {% elif notification.notification_type == 2 %}
+            💬 <a href="{% url 'public_profile' notification.sender.username %}"><strong>{{ notification.sender }}</strong></a> comentou no seu post
+        {% endif %}
+        <a href="{{ notification.get_absolute_url }}">Ver post</a>
+        <small class="text-muted float-end">{{ notification.timestamp|naturaltime }}</small>
+    </li>
+    {% empty %}
+    <li class="list-group-item">Sem notificações.</li>
+    {% endfor %}
+</ul>
+{% endblock %}
