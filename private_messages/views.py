@@ -1,3 +1,4 @@
+from urllib import request
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
@@ -5,26 +6,28 @@ from .models import Message
 from .forms import MessageForm
 from django.db import models
 from django.http import JsonResponse
-from django.db.models import Q, Count
+from django.db.models import Q, Count 
 
 @login_required
 def inbox(request):
     user = request.user
 
-    # Busca utilizadores com quem o user já trocou mensagens
+    # search for contacts
     contacts = User.objects.filter(
         Q(sent_messages__recipient=user) | Q(received_messages__sender=user)
     ).distinct()
 
-    # Anotar para cada contacto quantas mensagens NÃO LIDAS o user tem vindo a receber deles
+    # Annotate unread message count
     contacts = contacts.annotate(
         unread_count=Count(
             'sent_messages',
-            filter=Q(sent_messages__recipient=user, sent_messages__read=False)
+            filter=Q(sent_messages__recipient=user, sent_messages__read=False),
+            distinct=True
         )
     )
 
     return render(request, 'private_messages/inbox.html', {'contacts': contacts})
+
 
 
 @login_required
@@ -37,9 +40,10 @@ def conversation(request, username):
         (models.Q(sender=other_user) & models.Q(recipient=user))
     ).order_by('timestamp')
 
-    unread = messages_qs.filter(recipient=user, read=False)
-    unread.update(read=True)
+    
+    messages_qs.filter(recipient=user, read=False).update(read=True)
 
+    
     if request.method == 'POST':
         form = MessageForm(request.POST)
         if form.is_valid():
@@ -48,12 +52,11 @@ def conversation(request, username):
                 sender=user, recipient=other_user, content=content
             )
 
-            # Se o pedido for AJAX, devolvemos JSON
             if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
                 return JsonResponse({
                     'sender': new_message.sender.username,
                     'content': new_message.content,
-                    'timestamp': new_message.timestamp.strftime("%d/%m/%Y %H:%M")
+                    'timestamp': new_message.timestamp.strftime("%Y-%m-%dT%H:%M:%S")
                 })
 
             return redirect('conversation', username=other_user.username)
@@ -63,6 +66,6 @@ def conversation(request, username):
     return render(request, 'private_messages/conversation.html', {
         'messages': messages_qs,
         'form': form,
-        'other_user': other_user
+        'other_user': other_user,
+        'current_username': user.username
     })
-
