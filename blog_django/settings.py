@@ -95,6 +95,7 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
                 'blog.context_processors.sidebar_data', # Add the sidebar data context processor
+                'notifications.context_processors.unread_notifications_count',  # Add the unread notifications count context processor
             ],
         },
     },
