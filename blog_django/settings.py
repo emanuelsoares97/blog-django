@@ -44,6 +44,8 @@ INSTALLED_APPS = [
 
     'django.contrib.sites',  
 
+    'private_messages',
+
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
@@ -57,10 +59,12 @@ SITE_ID = 1
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'  # For development, use console backend to print emails to console
 
-ACCOUNT_EMAIL_REQUIRED = True # Require email for account creation
+ACCOUNT_SIGNUP_FIELDS = ['email*', 'username*', 'password1*', 'password2*']
 
 SOCIALACCOUNT_AUTO_SIGNUP = True # Automatically create a user account on social login
 SOCIALACCOUNT_LOGIN_ON_GET = True # Login the user immediately on social login
+
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

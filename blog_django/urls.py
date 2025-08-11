@@ -21,10 +21,12 @@ from users import views as user_views
 from django.views.generic import RedirectView
 from django.conf import settings
 from django.conf.urls.static import static
+from private_messages import views as message_views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('blog.urls')),
+    path('private_messages/', include('private_messages.urls')),
 
     # User authentication flows - all centralized in your custom 'users' app views
     path('register/', user_views.register, name='register'),

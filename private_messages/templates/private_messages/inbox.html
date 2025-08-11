@@ -1,0 +1,25 @@
+{% extends 'blog/base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="mb-4 fw-bold">Caixa de Entrada</h2>
+    
+    <ul class="list-group shadow-sm rounded">
+        {% for contact in contacts %}
+            <li class="list-group-item d-flex justify-content-between align-items-center py-3">
+                <a href="{% url 'conversation' contact.username %}" class="d-flex align-items-center text-decoration-none text-dark fs-5 fw-semibold">
+                    <i class="bi bi-person-circle fs-2 me-3 text-primary"></i>
+                    {{ contact.username }}
+                </a>
+                {% if contact.unread_count > 0 %}
+                    <span class="badge bg-danger rounded-pill px-3 py-2 fs-6" title="{{ contact.unread_count }} mensagem{{ contact.unread_count|pluralize }}">
+                        {{ contact.unread_count }}
+                    </span>
+                {% endif %}
+            </li>
+        {% empty %}
+            <li class="list-group-item text-muted fs-5 text-center">Sem mensagens ainda.</li>
+        {% endfor %}
+    </ul>
+</div>
+{% endblock %}
