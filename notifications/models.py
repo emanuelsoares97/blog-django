@@ -9,7 +9,7 @@ class Notification(models.Model):
         (2, 'comment'),
     )
     recipient = models.ForeignKey(User, related_name='notifications', on_delete=models.CASCADE)
-    sender = models.ForeignKey(User, null=True, on_delete=models.SET_NULL)
+    sender = models.ForeignKey(User, null=True, on_delete=models.CASCADE)
     notification_type = models.IntegerField(choices=NOTIFICATION_TYPES)
     post = models.ForeignKey('blog.Post', on_delete=models.CASCADE, null=True, blank=True)
     comment = models.ForeignKey('blog.Comment', on_delete=models.CASCADE, null=True, blank=True)
