@@ -1,0 +1,14 @@
+services:
+  web:
+    build: .  # constrói a imagem a partir do Dockerfile na raiz
+    command: sh -c "python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
+    volumes:
+      - .:/app  # sincroniza código local com o container para desenvolvimento
+    ports:
+      - "8000:8000"  # porta_host:porta_container
+    environment:
+      - DB_NAME=${DB_NAME}
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_HOST=${DB_HOST}   # Supabase host
+      - DB_PORT=${DB_PORT}
