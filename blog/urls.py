@@ -18,5 +18,5 @@ urlpatterns = [
     path('post/<int:pk>/update/', PostUpdateView.as_view(), name='post-update'),
     path('post/<int:pk>/delete/', PostDeleteView.as_view(), name='post-delete'),
     path('post/<int:post_id>/comment/', views.add_comment, name='add_comment'), 
-    path('post/<int:post_id>/toggle-like-ajax/', views.toggle_like_post_ajax, name='toggle-like-ajax'),
+    path('post/<int:post_id>/toggle-like-ajax/', views.toggle_like_post_ajax, name='toggle-like-ajax'), 
 ]
