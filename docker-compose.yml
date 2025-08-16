@@ -12,3 +12,4 @@ services:
       - DB_PASSWORD=${DB_PASSWORD}
       - DB_HOST=${DB_HOST}   # Supabase host
       - DB_PORT=${DB_PORT}
+      - SECRET_KEY=${SECRET_KEY}
