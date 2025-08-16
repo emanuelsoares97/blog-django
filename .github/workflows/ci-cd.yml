@@ -11,6 +11,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      # Validação dos secrets necessários
       - name: Validate secrets
         run: |
           REQUIRED_SECRETS=(SECRET_KEY DB_NAME DB_USER DB_PASSWORD DB_HOST DB_PORT EMAIL_HOST_USER EMAIL_HOST_PASSWORD GOOGLE_CLIENT_ID GOOGLE_CLIENT_SECRET)
@@ -37,10 +38,7 @@ jobs:
       - name: Build Docker image de testes
         run: docker build . --file Dockerfile --tag blog-app:test
 
-      - name: Debug: see if image exists
-        run: bash -c "docker images | grep blog-app"
-
-      - name: Debug: show docker run command
+      - name: "Debug: show docker run command"
         run: |
           echo docker run --rm \
             -e SECRET_KEY=${{ secrets.SECRET_KEY }} \
@@ -56,16 +54,16 @@ jobs:
             blog-app:test bash -c "python manage.py test"
 
       - name: Run tests dentro do container
-        run: >
-          docker run --rm
-          -e SECRET_KEY=${{ secrets.SECRET_KEY }}
-          -e DB_NAME=${{ secrets.DB_NAME }}
-          -e DB_USER=${{ secrets.DB_USER }}
-          -e DB_PASSWORD=${{ secrets.DB_PASSWORD }}
-          -e DB_HOST=${{ secrets.DB_HOST }}
-          -e DB_PORT=${{ secrets.DB_PORT }}
-          -e EMAIL_HOST_USER=${{ secrets.EMAIL_HOST_USER }}
-          -e EMAIL_HOST_PASSWORD=${{ secrets.EMAIL_HOST_PASSWORD }}
-          -e GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }}
-          -e GOOGLE_CLIENT_SECRET=${{ secrets.GOOGLE_CLIENT_SECRET }}
-          blog-app:test bash -c "python manage.py test"
+        run: |
+          docker run --rm \
+            -e SECRET_KEY=${{ secrets.SECRET_KEY }} \
+            -e DB_NAME=${{ secrets.DB_NAME }} \
+            -e DB_USER=${{ secrets.DB_USER }} \
+            -e DB_PASSWORD=${{ secrets.DB_PASSWORD }} \
+            -e DB_HOST=${{ secrets.DB_HOST }} \
+            -e DB_PORT=${{ secrets.DB_PORT }} \
+            -e EMAIL_HOST_USER=${{ secrets.EMAIL_HOST_USER }} \
+            -e EMAIL_HOST_PASSWORD=${{ secrets.EMAIL_HOST_PASSWORD }} \
+            -e GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }} \
+            -e GOOGLE_CLIENT_SECRET=${{ secrets.GOOGLE_CLIENT_SECRET }} \
+            blog-app:test bash -c "python manage.py test"
