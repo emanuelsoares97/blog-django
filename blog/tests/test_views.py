@@ -31,10 +31,6 @@ class BlogViewsTest(TestCase):
         expected_posts = list(Post.objects.all().order_by('-created_at')[0:5])  # create pag
         self.assertListEqual(context_posts, expected_posts)
 
-
-
-
-
     def test_about(self):
         url = reverse('blog-about')
         response = self.client.get(url)

@@ -229,3 +229,45 @@ SOCIALACCOUNT_PROVIDERS = {
         'METHOD': 'oauth2'
     }
 }
+
+import os
+
+LOGS_DIR = os.path.join(BASE_DIR, "logs")
+os.makedirs(LOGS_DIR, exist_ok=True)
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'standard': {
+            'format': '%(asctime)s | %(levelname)s | %(name)s | %(message)s',
+        },
+    },
+    'handlers': {
+        'general_file': {
+            'level': 'INFO',
+            'class': 'logging.FileHandler',
+            'filename': os.path.join(LOGS_DIR, 'logs_geral.log'),
+            'formatter': 'standard',
+        },
+        'error_file': {
+            'level': 'ERROR',
+            'class': 'logging.FileHandler',
+            'filename': os.path.join(LOGS_DIR, 'logs_erros.log'),
+            'formatter': 'standard',
+        },
+        'debug_file': {
+            'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'filename': os.path.join(LOGS_DIR, 'logs_debug.log'),
+            'formatter': 'standard',
+        },
+    },
+    'loggers': {
+        '': {  # Root logger
+            'handlers': ['general_file', 'error_file', 'debug_file'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+    }
+}

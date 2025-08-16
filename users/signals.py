@@ -2,6 +2,10 @@ from django.db.models.signals import post_save #
 from django.contrib.auth.models import User
 from django.dispatch import receiver 
 from .models import Profile
+import requests
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 @receiver(post_save, sender=User)
@@ -34,7 +38,7 @@ def save_profile_picture_on_login(request, user, **kwargs):
             if picture_url:
                 profile = user.profile
                 if not profile.image or 'google' not in profile.image.name:
-                    import requests
+
                     from django.core.files.base import ContentFile
 
                     response = requests.get(picture_url)
@@ -42,4 +46,4 @@ def save_profile_picture_on_login(request, user, **kwargs):
                     file_name = f"{user.username}_google.jpg"
                     profile.image.save(file_name, ContentFile(response.content), save=True)
     except Exception as e:
-        print("Erro ao salvar foto do Google no login:", e)
+        logger.error("Erro ao salvar foto do Google no login:", e)

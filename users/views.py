@@ -14,7 +14,7 @@ from django.contrib.auth.models import User
 from django.core.paginator import Paginator
 
 class CustomLoginView(LoginView):
-    template_name = 'users/login.html'  # ou 'account/login.html', conforme seu template
+    template_name = 'users/login.html'
     authentication_form = CustomLoginForm  # Use your custom login form
     
     def get_context_data(self, **kwargs):
