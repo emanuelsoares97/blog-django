@@ -47,6 +47,20 @@ jobs:
       - name: List Docker images
         run: docker images
 
-      # Run dos testes dentro do container (uma linha para evitar parsing YAML)
+      # Criar ficheiro env.list com todos os secrets
+      - name: Create env file for Docker
+        run: |
+          echo "SECRET_KEY=${{ secrets.SECRET_KEY }}" >> env.list
+          echo "DB_NAME=${{ secrets.DB_NAME }}" >> env.list
+          echo "DB_USER=${{ secrets.DB_USER }}" >> env.list
+          echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> env.list
+          echo "DB_HOST=${{ secrets.DB_HOST }}" >> env.list
+          echo "DB_PORT=${{ secrets.DB_PORT }}" >> env.list
+          echo "EMAIL_HOST_USER=${{ secrets.EMAIL_HOST_USER }}" >> env.list
+          echo "EMAIL_HOST_PASSWORD=${{ secrets.EMAIL_HOST_PASSWORD }}" >> env.list
+          echo "GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }}" >> env.list
+          echo "GOOGLE_CLIENT_SECRET=${{ secrets.GOOGLE_CLIENT_SECRET }}" >> env.list
+
+      # Run dos testes dentro do container usando o env-file
       - name: Run tests dentro do container
-        run: docker run --rm -e SECRET_KEY=${{ secrets.SECRET_KEY }} -e DB_NAME=${{ secrets.DB_NAME }} -e DB_USER=${{ secrets.DB_USER }} -e DB_PASSWORD=${{ secrets.DB_PASSWORD }} -e DB_HOST=${{ secrets.DB_HOST }} -e DB_PORT=${{ secrets.DB_PORT }} -e EMAIL_HOST_USER=${{ secrets.EMAIL_HOST_USER }} -e EMAIL_HOST_PASSWORD=${{ secrets.EMAIL_HOST_PASSWORD }} -e GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }} -e GOOGLE_CLIENT_SECRET=${{ secrets.GOOGLE_CLIENT_SECRET }} blog-app:test bash -c "python manage.py test"
+        run: docker run --rm --env-file env.list blog-app:test bash -c "python manage.py test"
