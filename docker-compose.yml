@@ -1,15 +1,20 @@
+version: "3.9"
 services:
   web:
-    build: .  # constrói a imagem a partir do Dockerfile na raiz
+    build: .
     command: sh -c "python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
     volumes:
-      - .:/app  # sincroniza código local com o container para desenvolvimento
+      - .:/app
     ports:
-      - "8000:8000"  # porta_host:porta_container
+      - "8000:8000"
     environment:
+      - SECRET_KEY=${SECRET_KEY}
       - DB_NAME=${DB_NAME}
       - DB_USER=${DB_USER}
       - DB_PASSWORD=${DB_PASSWORD}
-      - DB_HOST=${DB_HOST}   # supabase host
+      - DB_HOST=${DB_HOST}
       - DB_PORT=${DB_PORT}
-      - SECRET_KEY=${SECRET_KEY}
+      - EMAIL_HOST_USER=${EMAIL_HOST_USER}
+      - EMAIL_HOST_PASSWORD=${EMAIL_HOST_PASSWORD}
+      - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
+      - GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}

@@ -10,21 +10,44 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
-from pathlib import Path
-import dotenv
 import os
+from pathlib import Path
 
-dotenv.load_dotenv()
+if os.environ.get("DJANGO_ENV") != "production":
+    from dotenv import load_dotenv
+    load_dotenv()
 
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+SECRET_KEY = os.environ.get('SECRET_KEY')
+if not SECRET_KEY:
+    raise Exception('SECRET_KEY not found!')
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': os.environ.get('DB_NAME'),
+        'USER': os.environ.get('DB_USER'),
+        'PASSWORD': os.environ.get('DB_PASSWORD'),
+        'HOST': os.environ.get('DB_HOST'),
+        'PORT': os.environ.get('DB_PORT'),
+    }
+}
+
+EMAIL_HOST = os.environ.get('EMAIL_HOST', 'smtp.gmail.com')
+EMAIL_PORT = int(os.environ.get('EMAIL_PORT', 587))
+EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD')
+EMAIL_USE_TLS = os.environ.get('EMAIL_USE_TLS', 'True') == 'True'
+
+GOOGLE_CLIENT_ID = os.environ.get('GOOGLE_CLIENT_ID')
+GOOGLE_CLIENT_SECRET = os.environ.get('GOOGLE_CLIENT_SECRET')
 
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.getenv('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -117,16 +140,6 @@ WSGI_APPLICATION = 'blog_django.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.getenv('DB_NAME', 'postgres'),            
-        'USER': os.getenv('DB_USER', 'postgres'),  
-        'PASSWORD': os.getenv('DB_PASSWORD', 'postgres'),   
-        'HOST': os.getenv('DB_HOST', 'db'),  
-        'PORT': os.getenv('DB_PORT', '5432'),                                 
-    }
-}
 
 import sys
 
@@ -202,16 +215,6 @@ LOGIN_REDIRECT_URL = 'blog-home' # URL to redirect to after login
 LOGOUT_REDIRECT_URL = 'login' # URL to redirect to after logout
 LOGIN_URL = 'login' # URL to redirect to when the user is not authenticated
 
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'  # Use SMTP backend for email
-EMAIL_HOST = 'smtp.gmail.com'  # Your email provider's SMTP server
-EMAIL_PORT = 587  # SMTP port (usually 587 for TLS)
-EMAIL_USE_TLS = True  # Use TLS for security
-
-
-
-EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
-EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
-
 SOCIALACCOUNT_PROVIDERS = {
     'google': {
         'APP': {
@@ -229,8 +232,6 @@ SOCIALACCOUNT_PROVIDERS = {
         'METHOD': 'oauth2'
     }
 }
-
-import os
 
 LOGS_DIR = os.path.join(BASE_DIR, "logs")
 os.makedirs(LOGS_DIR, exist_ok=True)
