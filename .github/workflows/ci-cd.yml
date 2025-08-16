@@ -3,6 +3,9 @@ name: CI/CD Pipeline
 on:
   push:
     branches: [ main ]
+    
+env:
+  SECRET_KEY: django-ci-testing-key
 
 jobs:
   # 1. Build e Testes
@@ -17,5 +20,5 @@ jobs:
 
       - name: Run tests dentro do container
         run: |
-          docker run --rm blog-app:test \
+          docker run --rm -e SECRET_KEY=${{ env.SECRET_KEY }} blog-app:test \
           bash -c "pip install -r requirements.txt && python manage.py test"
