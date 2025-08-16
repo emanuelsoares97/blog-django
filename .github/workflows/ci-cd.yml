@@ -38,7 +38,7 @@ jobs:
         run: docker build . --file Dockerfile --tag blog-app:test
 
       - name: Debug: see if image exists
-        run: docker images | grep blog-app
+        run: bash -c "docker images | grep blog-app"
 
       - name: Debug: show docker run command
         run: |
