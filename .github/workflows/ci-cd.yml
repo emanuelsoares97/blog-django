@@ -16,7 +16,7 @@ jobs:
 
       - name: Run tests dentro do container
         run: |
-          docker run --rm 
+          docker run --rm \
             -e SECRET_KEY=${{ secrets.SECRET_KEY }} \
             -e DB_NAME=${{ secrets.DB_NAME }} \
             -e DB_USER=${{ secrets.DB_USER }} \
