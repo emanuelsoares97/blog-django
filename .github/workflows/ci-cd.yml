@@ -1,0 +1,21 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  # 1. Build e Testes
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Build Docker image de testes
+        run: docker build . --file Dockerfile --tag blog-app:test
+
+      - name: Run tests dentro do container
+        run: |
+          docker run --rm blog-app:test \
+          bash -c "pip install -r requirements.txt && python manage.py test"
