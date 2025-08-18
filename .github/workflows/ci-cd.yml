@@ -1,5 +1,6 @@
 name: CI/CD Pipeline
 
+# Trigger the workflow on push to main branch
 on:
   push:
     branches: [ main ]
@@ -7,20 +8,20 @@ on:
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
+
     steps:
+      # Checkout the repository code to the runner
       - name: Checkout
         uses: actions/checkout@v4
 
-      # Validação dos secrets necessários
+      # Validate that all required secrets are defined
       - name: Validate secrets
         run: |
           REQUIRED_SECRETS=(SECRET_KEY DB_NAME DB_USER DB_PASSWORD DB_HOST DB_PORT EMAIL_HOST_USER EMAIL_HOST_PASSWORD GOOGLE_CLIENT_ID GOOGLE_CLIENT_SECRET)
           for secret in "${REQUIRED_SECRETS[@]}"; do
             if [ -z "${!secret}" ]; then
-              echo "❌ Missing secret: $secret"
+              echo "Missing secret: $secret"
               exit 1
-            else
-              echo "✅ $secret OK"
             fi
           done
         env:
@@ -35,19 +36,20 @@ jobs:
           GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
           GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
 
-      # Limpeza opcional de imagens antigas
+      # Clean up old Docker images to prevent conflicts
       - name: Cleanup old Docker images
         run: docker image prune -af
 
-      # Build da imagem Docker
-      - name: Build Docker image de testes
+      # Build the Docker image for testing
+      - name: Build Docker image
         run: docker build . --file Dockerfile --tag blog-app:test
 
-      # Listar imagens para confirmar que build ocorreu
+      # List Docker images to confirm the build succeeded
       - name: List Docker images
         run: docker images
 
-      # Criar ficheiro env.list com todos os secrets
+      # Create an env-file containing all secrets for Docker
+      # This avoids multiple -e variables in docker run which can cause parsing issues
       - name: Create env file for Docker
         run: |
           echo "SECRET_KEY=${{ secrets.SECRET_KEY }}" >> env.list
@@ -61,6 +63,10 @@ jobs:
           echo "GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }}" >> env.list
           echo "GOOGLE_CLIENT_SECRET=${{ secrets.GOOGLE_CLIENT_SECRET }}" >> env.list
 
-      # Run dos testes dentro do container usando o env-file
-      - name: Run tests dentro do container
+      # Run Django tests inside the Docker container
+      # --rm: remove container after it finishes
+      # --env-file env.list: load all environment variables from the file
+      # blog-app:test: use the image built in the previous step
+      # bash -c "python manage.py test": execute Django tests inside container
+      - name: Run tests inside the container
         run: docker run --rm --env-file env.list blog-app:test bash -c "python manage.py test"
