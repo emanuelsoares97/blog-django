@@ -6,11 +6,14 @@ on:
     branches: [ main ]
 
 jobs:
+
+  # Build & Test
+
   build-and-test:
     runs-on: ubuntu-latest
 
     steps:
-      # Checkout the repository code to the runner
+      # Checkout repository code
       - name: Checkout
         uses: actions/checkout@v4
 
@@ -40,7 +43,7 @@ jobs:
       - name: Cleanup old Docker images
         run: docker image prune -af
 
-      # Build the Docker image for testing
+      # Build Docker image for testing
       - name: Build Docker image
         run: docker build . --file Dockerfile --tag blog-app:test
 
@@ -49,7 +52,6 @@ jobs:
         run: docker images
 
       # Create an env-file containing all secrets for Docker
-      # This avoids multiple -e variables in docker run which can cause parsing issues
       - name: Create env file for Docker
         run: |
           echo "SECRET_KEY=${{ secrets.SECRET_KEY }}" >> env.list
@@ -63,10 +65,30 @@ jobs:
           echo "GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }}" >> env.list
           echo "GOOGLE_CLIENT_SECRET=${{ secrets.GOOGLE_CLIENT_SECRET }}" >> env.list
 
-      # Run Django tests inside the Docker container
+      # Step 7: Run Django tests inside the Docker container
       # --rm: remove container after it finishes
       # --env-file env.list: load all environment variables from the file
       # blog-app:test: use the image built in the previous step
       # bash -c "python manage.py test": execute Django tests inside container
       - name: Run tests inside the container
         run: docker run --rm --env-file env.list blog-app:test bash -c "python manage.py test"
+
+
+  # Deploy to Render
+
+  deploy:
+    needs: build-and-test         # Only runs if build-and-test passes
+    runs-on: ubuntu-latest
+    if: ${{ success() }}         # Extra safety
+
+    steps:
+      #Checkout repository (safe to repeat)
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      #Trigger Render Deploy via Deploy Hook
+      - name: Deploy to Render
+        run: |
+          curl "$RENDER_DEPLOY_HOOK"
+        env:
+          RENDER_DEPLOY_HOOK: ${{ secrets.RENDER_DEPLOY_HOOK }}
