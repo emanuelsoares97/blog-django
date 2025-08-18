@@ -13,15 +13,29 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 import os
 from pathlib import Path
 
+# Load .env for local development
 if os.environ.get("DJANGO_ENV") != "production":
     from dotenv import load_dotenv
     load_dotenv()
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+# Secret key
 SECRET_KEY = os.environ.get('SECRET_KEY')
 if not SECRET_KEY:
     raise Exception('SECRET_KEY not found!')
+
+# Debug mode
+DEBUG = os.environ.get("DJANGO_ENV") != "production"
+
+# Allowed hosts
+if os.environ.get("DJANGO_ENV") == "production":
+    # Use Render domain in production
+    ALLOWED_HOSTS = [os.environ.get("RENDER_DOMAIN")]
+else:
+    # Local development
+    ALLOWED_HOSTS = ["127.0.0.1", "localhost"]
+
 
 DATABASES = {
     'default': {
