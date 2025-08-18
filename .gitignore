@@ -45,3 +45,7 @@ testtt.py
 instance/
 
 notas.txt
+
+htmlcov/
+
+staticfiles/
