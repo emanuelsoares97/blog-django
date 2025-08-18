@@ -7,7 +7,7 @@
     <div class="card shadow-sm mb-4 border-0">
         <div class="card-body text-center">
 
-            <img src="{{ profile_user.profile.image.url }}" 
+            <img src="{{ profile_user.profile.imageurl }}" 
                  alt="{{ profile_user.username }}" 
                  class="rounded-circle shadow-sm mb-3" 
                  style="width: 120px; height: 120px; object-fit: cover;">
@@ -28,7 +28,7 @@
 
 {% for post in posts %}
     <article class="media content-section" onclick="location.href='{% url 'post-detail' post.pk %}'" style="cursor:pointer;">
-        <img class="rounded-circle article-img" src="{{ post.author.profile.image.url }}" alt="Author Image">
+        <img class="rounded-circle article-img" src="{{ post.author.profile.image_url }}" alt="Author Image">
         <div class="media-body">
             <div class="article-metadata">
                 <a class="mr-2" href="{% url 'public_profile' post.author.username %}">{{ post.author }}</a>

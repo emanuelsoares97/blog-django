@@ -4,19 +4,19 @@
 {% block content %}
 <div class="container mt-4">
 
-    <!-- Cabeçalho do Perfil -->
+    <!-- Profile Header -->
     <div class="card shadow-sm border-0 mb-4">
         <div class="card-body text-center">
             <img class="rounded-circle shadow-sm mb-3"
-                 src="{{ user.profile.image.url }}"
-                 alt="Foto de perfil"
+                 src="{{ user.profile.image_url }}"
+                 alt="Profile Image"
                  style="width: 140px; height: 140px; object-fit: cover;">
             <h2 class="fw-bold">{{ user.username }}</h2>
             <p class="text-muted mb-0">{{ user.email }}</p>
         </div>
     </div>
 
-    <!-- Formulário de edição -->
+    <!-- Edit Form -->
     <div class="card shadow-sm border-0 mb-5">
         <div class="card-body">
             <h4 class="mb-4 fw-semibold">Editar Informação de Perfil</h4>
@@ -33,12 +33,12 @@
         </div>
     </div>
 
-    <!-- Lista de posts do próprio utilizador -->
+    <!-- User Posts -->
     <h4 class="mb-3 fw-semibold">Os meus posts</h4>
     {% for post in posts %}
         <article class="media content-section p-3 rounded shadow-sm mb-3 bg-white">
             <img class="rounded-circle article-img me-3"
-                 src="{{ post.author.profile.image.url }}"
+                 src="{{ post.author.profile.image_url }}"
                  alt="Author Image"
                  style="width:50px; height:50px; object-fit:cover;">
 

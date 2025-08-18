@@ -11,23 +11,21 @@ For more info: https://docs.djangoproject.com/en/5.2/topics/settings/
 """
 
 import os
+import sys
 from pathlib import Path
 
 
 # Load .env for local development only
-
 if os.environ.get("DJANGO_ENV") != "production":
     from dotenv import load_dotenv
     load_dotenv()
 
 
 # Base directory
-
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
 # Secret key
-
 SECRET_KEY = os.environ.get('SECRET_KEY')
 if not SECRET_KEY:
     raise Exception('SECRET_KEY not found!')
@@ -35,13 +33,11 @@ if not SECRET_KEY:
 
 # Debug mode
 # True for local development, False in production
-
 DEBUG = os.environ.get("DJANGO_ENV") != "production"
 
 
 # Allowed hosts
 # Only allow Render domain in production
-
 if os.environ.get("DJANGO_ENV") == "production":
     RENDER_DOMAIN = os.environ.get("RENDER_DOMAIN")
     if not RENDER_DOMAIN:
@@ -52,7 +48,6 @@ else:
 
 
 # Database
-
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
@@ -65,7 +60,6 @@ DATABASES = {
 }
 
 # Use in-memory SQLite for tests
-import sys
 if 'test' in sys.argv:
     DATABASES = {
         'default': {
@@ -76,7 +70,6 @@ if 'test' in sys.argv:
 
 
 # Email configuration
-
 EMAIL_HOST = os.environ.get('EMAIL_HOST', 'smtp.gmail.com')
 EMAIL_PORT = int(os.environ.get('EMAIL_PORT', 587))
 EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER')
@@ -85,18 +78,29 @@ EMAIL_USE_TLS = os.environ.get('EMAIL_USE_TLS', 'True') == 'True'
 
 
 # Google OAuth credentials
-
 GOOGLE_CLIENT_ID = os.environ.get('GOOGLE_CLIENT_ID')
 GOOGLE_CLIENT_SECRET = os.environ.get('GOOGLE_CLIENT_SECRET')
 
 
 # Application definition
-
 INSTALLED_APPS = [
     'crispy_forms',
     'crispy_bootstrap4',
     'users.apps.UsersConfig',
     'blog.apps.BlogConfig',
+
+    # Third-party apps
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'cloudinary',
+    'cloudinary_storage',
+
+    # Social providers
+    'allauth.socialaccount.providers.google',
+    'allauth.socialaccount.providers.github',
+
+    # Django contrib apps
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -104,15 +108,11 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.sites',
+    'django.contrib.humanize',
+
+    # Custom apps
     'private_messages',
     'notifications.apps.NotificationsConfig',
-    'django.contrib.humanize',
-    'allauth',
-    'allauth.account',
-    'allauth.socialaccount',
-    # Social providers
-    'allauth.socialaccount.providers.google',
-    'allauth.socialaccount.providers.github',
 ]
 
 SITE_ID = 1
@@ -126,9 +126,9 @@ SOCIALACCOUNT_ADAPTER = 'users.adapters.MySocialAccountAdapter'
 
 
 # Middleware
-
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    "whitenoise.middleware.WhiteNoiseMiddleware",  # For serving static files in production
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -136,14 +136,12 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     "allauth.account.middleware.AccountMiddleware",
-    "whitenoise.middleware.WhiteNoiseMiddleware",
 ]
 
 ROOT_URLCONF = 'blog_django.urls'
 
 
 # Templates
-
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -165,7 +163,6 @@ WSGI_APPLICATION = 'blog_django.wsgi.application'
 
 
 # Authentication backends
-
 AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
     'allauth.account.auth_backends.AuthenticationBackend',
@@ -173,7 +170,6 @@ AUTHENTICATION_BACKENDS = [
 
 
 # Password validation
-
 AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
     {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator'},
@@ -183,7 +179,6 @@ AUTH_PASSWORD_VALIDATORS = [
 
 
 # Internationalization
-
 LANGUAGE_CODE = 'en-us'
 TIME_ZONE = 'UTC'
 USE_I18N = True
@@ -192,31 +187,31 @@ USE_TZ = True
 
 # Static files (CSS, JS)
 # In production, Render will serve static files with `collectstatic`
-
 STATIC_URL = '/static/'
-STATIC_ROOT = BASE_DIR / 'staticfiles'  # Collect static files here for production
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 
-# Media files (uploaded by users)
-
-MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR / 'media'
+# Cloudinary (all uploaded media goes to Cloudinary)
+CLOUDINARY_STORAGE = {
+    'CLOUD_NAME': os.environ.get('CLOUDINARY_CLOUD_NAME'),
+    'API_KEY': os.environ.get('CLOUDINARY_API_KEY'),
+    'API_SECRET': os.environ.get('CLOUDINARY_API_SECRET'),
+}
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
 
 # Login/Logout redirects
-
 LOGIN_REDIRECT_URL = 'blog-home'
 LOGOUT_REDIRECT_URL = 'login'
 LOGIN_URL = 'login'
 
 
 # Crispy Forms
-
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
 
 # Social account providers
-
 SOCIALACCOUNT_PROVIDERS = {
     'google': {
         'APP': {'client_id': GOOGLE_CLIENT_ID, 'secret': GOOGLE_CLIENT_SECRET},
@@ -228,7 +223,6 @@ SOCIALACCOUNT_PROVIDERS = {
 
 
 # Logging
-
 LOGS_DIR = BASE_DIR / "logs"
 os.makedirs(LOGS_DIR, exist_ok=True)
 
@@ -245,5 +239,3 @@ LOGGING = {
         '': {'handlers': ['general_file', 'error_file', 'debug_file'], 'level': 'DEBUG', 'propagate': True},
     }
 }
-
-STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
