@@ -18,8 +18,8 @@ class PostListView(ListView):
     ordering = ["-created_at"]
 
     def get_queryset(self):
-        # prefetch de comments só com campos essenciais (opcional)
-        comments_qs = Comment.objects.only("id", "post_id")
+        """Return posts with related data for efficient rendering."""
+        comments_qs = Comment.objects.only("id", "post_id")  # Prefetch only essential fields
         return (
             Post.objects
             .select_related("author", "author__profile")   
