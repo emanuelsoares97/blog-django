@@ -189,7 +189,7 @@ USE_TZ = True
 # In production, Render will serve static files with `collectstatic`
 STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
-STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+STATICFILES_STORAGE = "django.contrib.staticfiles.storage.StaticFilesStorage"
 
 
 # Cloudinary (all uploaded media goes to Cloudinary)
