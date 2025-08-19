@@ -22,10 +22,14 @@ class Profile(models.Model):
     @property
     def image_url(self):
         """
-        Return the user profile image if exists,
-        otherwise return the default image hosted in Cloudinary.
+        Return a secure (https) URL for the profile image if it exists,
+        otherwise return the secure default image on Cloudinary.
         """
-        if self.image:
-            return self.image.url
-        return "https://res.cloudinary.com/dogevu6ip/image/upload/v1755528094/default_v7ayus.jpg"
+        url = getattr(self.image, "url", None) if self.image else None
+        if not url:
+            url = "https://res.cloudinary.com/dogevu6ip/image/upload/v1755528094/default_v7ayus.jpg"
+        if url.startswith("http://"):
+            url = url.replace("http://", "https://", 1)
+        return url
+
 
