@@ -7,6 +7,5 @@ class UsersConfig(AppConfig):
 
     def ready(self):
        import users.signals # Ensure signals are imported when the app is ready
-       import cloudinary
-       cloudinary.config(secure=True)
+
        
