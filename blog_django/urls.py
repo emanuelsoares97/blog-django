@@ -57,7 +57,9 @@ urlpatterns = [
     path('accounts/password/reset/done/', RedirectView.as_view(url='/password-reset/done/', permanent=False)),
     path('accounts/password/reset/confirm/<uidb64>/<token>/', RedirectView.as_view(url='/password-reset-confirm/<uidb64>/<token>/', permanent=False)),
     path('accounts/password/reset/complete/', RedirectView.as_view(url='/password-reset-complete/', permanent=False)),
-    path('accounts/', include('allauth.urls'))
+    path('accounts/', include('allauth.urls')),
+
+    path("debug", include("debug_toolbar.urls")),
 
 ]
 

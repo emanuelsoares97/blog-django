@@ -8,15 +8,31 @@ from django.views.generic import ListView, DetailView, CreateView, UpdateView, D
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
-
+from django.db.models import Count, Prefetch
 
 class PostListView(ListView):
     model = Post
-    template_name = 'blog/home.html'  # <app>/<model>_<viewtype>.html
-    context_object_name = 'posts' # Name of the variable to access in the template
-    ordering = ['-created_at']  # Order by created_at descending
-    paginate_by = 5  # Number of posts to display per page
+    template_name = "blog/home.html"
+    context_object_name = "posts"
+    paginate_by = 5
+    ordering = ["-created_at"]
 
+    def get_queryset(self):
+        # prefetch de comments só com campos essenciais (opcional)
+        comments_qs = Comment.objects.only("id", "post_id")
+        return (
+            Post.objects
+            .select_related("author", "author__profile")   
+            .prefetch_related(
+                "likes",  
+                Prefetch("comments", queryset=comments_qs), 
+            )
+            .annotate(
+                likes_count=Count("likes", distinct=True),
+                comments_count=Count("comments", distinct=True),
+            )
+            .order_by("-created_at")
+        )
 
 
 class PostDetailView(DetailView):

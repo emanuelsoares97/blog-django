@@ -49,7 +49,7 @@ def save_profile_picture_on_login(request, user, **kwargs):
         # ensure we have a Profile
         profile, _ = Profile.objects.get_or_create(user=user)
 
-        # if it already has an image, don't touch it (first login only)
+        # if it already has an image, don't touch it
         has_file = bool(getattr(profile.image, "public_id", None) or getattr(profile.image, "name", ""))
         if has_file:
             logger.info("[avatar] image already set for user=%s; skip", user.username)

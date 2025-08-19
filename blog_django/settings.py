@@ -76,6 +76,8 @@ INSTALLED_APPS = [
     "blog.apps.BlogConfig",
     "private_messages",
     "notifications.apps.NotificationsConfig",
+
+    "debug_toolbar",
 ]
 
 SITE_ID = 1
@@ -84,6 +86,8 @@ SITE_ID = 1
 # Middleware
 
 MIDDLEWARE = [
+    "debug_toolbar.middleware.DebugToolbarMiddleware",
+
     "django.middleware.security.SecurityMiddleware",
     # WhiteNoise must be directly after SecurityMiddleware
     "whitenoise.middleware.WhiteNoiseMiddleware",
@@ -94,6 +98,8 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "allauth.account.middleware.AccountMiddleware",
+
+    
 ]
 
 ROOT_URLCONF = "blog_django.urls"
