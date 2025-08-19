@@ -77,7 +77,6 @@ INSTALLED_APPS = [
     "private_messages",
     "notifications.apps.NotificationsConfig",
 
-    "debug_toolbar",
 ]
 
 SITE_ID = 1
@@ -86,7 +85,6 @@ SITE_ID = 1
 # Middleware
 
 MIDDLEWARE = [
-    "debug_toolbar.middleware.DebugToolbarMiddleware",
 
     "django.middleware.security.SecurityMiddleware",
     # WhiteNoise must be directly after SecurityMiddleware
